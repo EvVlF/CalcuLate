@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Parser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">calculator-maven-junit</a> &gt; <a href="index.source.html" class="el_package">com.EvDroid</a> &gt; <span class="el_source">Parser.java</span></div><h1>Parser.java</h1><pre class="source lang-java linenums">package com.EvDroid;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Objects;
+
+<span class="nc" id="L9">class Parser {</span>
+<span class="fc" id="L10">  private static final ArrayDeque&lt;StringBuilder&gt; asStack = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L11">  private static final ArrayDeque&lt;StringBuilder&gt; preReversedPolishNotation = new ArrayDeque&lt;&gt;();</span>
+
+  @SuppressWarnings(&quot;SameReturnValue&quot;)
+  private static ArrayDeque&lt;StringBuilder&gt; parseInReversePolishNotation(
+      @NotNull ArrayDeque&lt;StringBuilder&gt; validatedExpression) {
+<span class="fc bfc" id="L16" title="All 2 branches covered.">    while (!validatedExpression.isEmpty()) {</span>
+<span class="fc" id="L17">      StringBuilder elementOfValidatedExpression = validatedExpression.pop();</span>
+<span class="fc" id="L18">      char charAt0 = elementOfValidatedExpression.charAt(0);</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">      if (Character.isDigit(charAt0)) {</span>
+<span class="fc" id="L20">        preReversedPolishNotation.add(elementOfValidatedExpression);</span>
+      } else {
+<span class="pc bpc" id="L22" title="1 of 3 branches missed.">        switch (charAt0) {</span>
+          case '+':
+          case '-':
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            while (!asStack.isEmpty()</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">                &amp;&amp; ('+' == (Objects.requireNonNull(asStack.peek())).charAt(0)</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">                    || '-' == (Objects.requireNonNull(asStack.peek())).charAt(0)</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">                    || '*' == (Objects.requireNonNull(asStack.peek())).charAt(0)</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">                    || '/' == (Objects.requireNonNull(asStack.peek())).charAt(0))) {</span>
+<span class="fc" id="L30">              preReversedPolishNotation.add(asStack.pop());</span>
+            }
+<span class="fc" id="L32">            asStack.push(elementOfValidatedExpression);</span>
+<span class="fc" id="L33">            break;</span>
+          case '*':
+          case '/':
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">            while (!asStack.isEmpty()</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">                &amp;&amp; ('*' == (Objects.requireNonNull(asStack.peek())).charAt(0)</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                    || '/' == (Objects.requireNonNull(asStack.peek())).charAt(0))) {</span>
+<span class="fc" id="L39">              preReversedPolishNotation.add(asStack.pop());</span>
+            }
+<span class="fc" id="L41">            asStack.push(elementOfValidatedExpression);</span>
+            break;
+        }
+      }
+<span class="fc" id="L45">    }</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">    while (!asStack.isEmpty()) {</span>
+<span class="fc" id="L47">      preReversedPolishNotation.add(asStack.pop());</span>
+    }
+<span class="fc" id="L49">    return preReversedPolishNotation;</span>
+  }
+
+  public static @NotNull @Unmodifiable ArrayList&lt;StringBuilder&gt; getParsedInReversePolishNotation(
+      ArrayDeque&lt;StringBuilder&gt; validatedExpression) {
+<span class="fc" id="L54">    return new ArrayList&lt;&gt;(parseInReversePolishNotation(validatedExpression));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

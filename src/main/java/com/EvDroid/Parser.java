@@ -1,28 +1,18 @@
 package com.EvDroid;
 
-import com.EvDroid.Exceptions.NotCorrectExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
-
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Objects;
 
-class Parsing {
-  private static final ArrayDeque<StringBuilder> validatedExpression;
-
-  static {
-    try {
-      validatedExpression = Validation.getValidatedExpression();
-    } catch (NotCorrectExpression e) {
-      throw new RuntimeException(e);
-    }
-  }
-
+class Parser {
   private static final ArrayDeque<StringBuilder> asStack = new ArrayDeque<>();
   private static final ArrayDeque<StringBuilder> preReversedPolishNotation = new ArrayDeque<>();
 
   @SuppressWarnings("SameReturnValue")
-  private static ArrayDeque<StringBuilder> preParseInPolishNotation() {
+  private static ArrayDeque<StringBuilder> parseInReversePolishNotation(
+      @NotNull ArrayDeque<StringBuilder> validatedExpression) {
     while (!validatedExpression.isEmpty()) {
       StringBuilder elementOfValidatedExpression = validatedExpression.pop();
       char charAt0 = elementOfValidatedExpression.charAt(0);
@@ -33,9 +23,9 @@ class Parsing {
           case '+':
           case '-':
             while (!asStack.isEmpty()
-                && ('+' == asStack.peek().charAt(0)
-                    || '+' == Objects.requireNonNull(asStack.peek()).charAt(0)
-                    || '*' == Objects.requireNonNull(asStack.peek()).charAt(0)
+                && ('+' == (Objects.requireNonNull(asStack.peek())).charAt(0)
+                    || '-' == (Objects.requireNonNull(asStack.peek())).charAt(0)
+                    || '*' == (Objects.requireNonNull(asStack.peek())).charAt(0)
                     || '/' == (Objects.requireNonNull(asStack.peek())).charAt(0))) {
               preReversedPolishNotation.add(asStack.pop());
             }
@@ -44,7 +34,7 @@ class Parsing {
           case '*':
           case '/':
             while (!asStack.isEmpty()
-                && ('*' == asStack.peek().charAt(0)
+                && ('*' == (Objects.requireNonNull(asStack.peek())).charAt(0)
                     || '/' == (Objects.requireNonNull(asStack.peek())).charAt(0))) {
               preReversedPolishNotation.add(asStack.pop());
             }
@@ -59,7 +49,8 @@ class Parsing {
     return preReversedPolishNotation;
   }
 
-  public static @NotNull @Unmodifiable ArrayDeque<StringBuilder> getParsedInPolishNotation() {
-    return preParseInPolishNotation();
+  public static @NotNull @Unmodifiable ArrayList<StringBuilder> getParsedInReversePolishNotation(
+      ArrayDeque<StringBuilder> validatedExpression) {
+    return new ArrayList<>(parseInReversePolishNotation(validatedExpression));
   }
 }
